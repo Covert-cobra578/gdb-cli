@@ -1,5 +1,5 @@
 ---
-name: gdb-debug
+name: gdb-cli
 description: |
   GDB debugging assistant that combines source code analysis with runtime state.
 

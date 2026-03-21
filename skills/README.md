@@ -4,7 +4,7 @@ This directory contains Claude Code skills for intelligent debugging with gdb-cl
 
 ## Available Skills
 
-### gdb-debug
+### gdb-cli
 
 A debugging assistant that combines source code analysis with runtime state inspection.
 
@@ -15,22 +15,20 @@ A debugging assistant that combines source code analysis with runtime state insp
 - Memory corruption investigation
 - Race condition diagnosis
 
+**Install:**
+
+```bash
+bunx skills add https://github.com/Cerdore/gdb-cli --skill=gdb-cli
+```
+
 **Usage:**
 
-1. **Install the skill** (copy to your Claude Code skills directory):
-   ```bash
-   cp -r skills/gdb-debug ~/.claude/commands/
-   ```
+```
+/gdb-cli
 
-2. **Invoke in Claude Code:**
-   ```
-   /gdb-debug
-   ```
-
-3. **Or describe your debugging need:**
-   ```
-   I have a core dump at ./core.1234 and binary at ./myapp. Help me debug it.
-   ```
+# Or describe your debugging need:
+I have a core dump at ./core.1234 and binary at ./myapp. Help me debug it.
+```
 
 ## Prerequisites
 

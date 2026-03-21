@@ -307,7 +307,7 @@ src/gdb_cli/
     └── heartbeat.py         # Heartbeat timeout management
 
 skills/
-└── gdb-debug/              # Claude Code skill for intelligent debugging
+└── gdb-cli/               # Claude Code skill for intelligent debugging
     ├── SKILL.md            # Skill definition
     └── evals/              # Test cases for skill evaluation
 ```
@@ -367,18 +367,18 @@ ssh user@remote-host "gdb-cli load --binary ./my_program --core ./core.12345"
 
 ## Claude Code Skills
 
-This project includes a **gdb-debug skill** for Claude Code that provides intelligent debugging assistance by combining source code analysis with runtime state inspection.
+This project includes a **gdb-cli skill** for Claude Code that provides intelligent debugging assistance by combining source code analysis with runtime state inspection.
 
 ### Install the Skill
 
 ```bash
-cp -r skills/gdb-debug ~/.claude/commands/
+bunx skills add https://github.com/Cerdore/gdb-cli --skill=gdb-cli
 ```
 
 ### Usage in Claude Code
 
 ```
-/gdb-debug
+/gdb-cli
 
 # Or describe your debugging need:
 I have a core dump at ./core.1234 and binary at ./myapp. Help me debug it.
