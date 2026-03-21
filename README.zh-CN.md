@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
 [![Python](https://img.shields.io/pypi/pyversions/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![CI](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml)
 
 [English](README.md) | [中文](README.zh-CN.md)
@@ -362,4 +362,4 @@ ssh user@remote-host "gdb-cli load --binary ./my_program --core ./core.12345"
 
 ## 许可证
 
-MIT License
+Apache License 2.0
