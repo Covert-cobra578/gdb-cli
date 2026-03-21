@@ -1,5 +1,10 @@
 # GDB CLI for AI
 
+[![PyPI version](https://img.shields.io/pypi/v/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
+[![Python](https://img.shields.io/pypi/pyversions/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml)
+
 [English](README.md) | [中文](README.zh-CN.md)
 
 A GDB debugging tool designed for AI Agents (Claude Code, etc.). Uses a "thin client CLI + GDB built-in Python RPC Server" architecture, enabling stateful GDB debugging through Bash.

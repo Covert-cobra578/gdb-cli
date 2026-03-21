@@ -1,5 +1,10 @@
 # GDB CLI for AI
 
+[![PyPI version](https://img.shields.io/pypi/v/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
+[![Python](https://img.shields.io/pypi/pyversions/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml)
+
 [English](README.md) | [中文](README.zh-CN.md)
 
 一个为 AI Agent（Claude Code 等）设计的 GDB 调试工具。采用"瘦客户端 CLI + GDB 内置 Python RPC Server"架构，通过 Bash 即可完成有状态的 GDB 调试。
