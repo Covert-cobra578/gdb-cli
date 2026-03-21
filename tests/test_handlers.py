@@ -20,12 +20,19 @@ Note: These tests require mocking the gdb module which is only
 available inside the GDB Python interpreter.
 """
 
+import os
 import sys
+from pathlib import Path
 import unittest
 from unittest.mock import Mock, patch
 
-# Mock gdb module before importing handlers
+# Mock gdb module before any imports that depend on it
 sys.modules['gdb'] = Mock()
+
+# Set up the server directory for value_formatter import
+# This must be done before importing handlers
+_server_dir = str(Path(__file__).parent.parent / "src" / "gdb_cli" / "gdb_server")
+os.environ["GDB_CLI_SERVER_DIR"] = _server_dir
 
 from gdb_cli.gdb_server.handlers import (
     handle_eval,
