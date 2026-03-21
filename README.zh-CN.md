@@ -31,10 +31,14 @@ gdb -nx -q -batch -ex "python print('OK')"
 ## 安装
 
 ```bash
-# clone 后本地安装
+# 直接从 GitHub 安装
+pip install git+https://github.com/Cerdore/gdb-cli.git
+
+# 或 clone 后本地安装
 git clone https://github.com/Cerdore/gdb-cli.git
 cd gdb-cli
 pip install -e .
+```
 
 # 环境自检
 gdb-cli env-check
@@ -335,21 +339,20 @@ gdb-cli load --binary ./crash_test --core /path/to/core \
 
 ## 通过 SSH 远程调试
 
-远程机器可通过 SSH 一行命令安装并运行：
+一行命令在远程机器安装并运行：
 
 ```bash
-ssh user@remote-host "git clone https://github.com/Cerdore/gdb-cli.git && cd gdb-cli && pip install -e . && gdb-cli load --binary ./my_program --core ./core.12345"
+ssh user@remote-host "pip install git+https://github.com/Cerdore/gdb-cli.git && gdb-cli load --binary ./my_program --core ./core.12345"
 ```
 
-或者本地安装后同步到远程：
+或者先安装再调试：
 
 ```bash
-# 本地安装，然后同步到远程
-pip install -e .
-rsync -av . user@remote-host:/path/to/gdb-cli/
+# 在远程安装
+ssh user@remote-host "pip install git+https://github.com/Cerdore/gdb-cli.git"
 
-# 在远程运行
-ssh user@remote-host "cd /path/to/gdb-cli && gdb-cli load --binary ./my_program --core ./core.12345"
+# 运行调试
+ssh user@remote-host "gdb-cli load --binary ./my_program --core ./core.12345"
 ```
 
 ## 许可证

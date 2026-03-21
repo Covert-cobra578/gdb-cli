@@ -31,10 +31,14 @@ gdb -nx -q -batch -ex "python print('OK')"
 ## Installation
 
 ```bash
-# Clone and install locally
+# Install directly from GitHub
+pip install git+https://github.com/Cerdore/gdb-cli.git
+
+# Or clone and install locally
 git clone https://github.com/Cerdore/gdb-cli.git
 cd gdb-cli
 pip install -e .
+```
 
 # Environment check
 gdb-cli env-check
@@ -335,21 +339,20 @@ gdb-cli load --binary ./crash_test --core /path/to/core \
 
 ## Remote Debugging via SSH
 
-For remote machines, install and run directly via SSH with a one-liner:
+Install and run on remote machine in one command:
 
 ```bash
-ssh user@remote-host "git clone https://github.com/Cerdore/gdb-cli.git && cd gdb-cli && pip install -e . && gdb-cli load --binary ./my_program --core ./core.12345"
+ssh user@remote-host "pip install git+https://github.com/Cerdore/gdb-cli.git && gdb-cli load --binary ./my_program --core ./core.12345"
 ```
 
-Or copy local installation to remote:
+Or install first, then debug:
 
 ```bash
-# Local install, then sync to remote
-pip install -e .
-rsync -av . user@remote-host:/path/to/gdb-cli/
+# Install on remote
+ssh user@remote-host "pip install git+https://github.com/Cerdore/gdb-cli.git"
 
-# Run on remote
-ssh user@remote-host "cd /path/to/gdb-cli && gdb-cli load --binary ./my_program --core ./core.12345"
+# Run debugging
+ssh user@remote-host "gdb-cli load --binary ./my_program --core ./core.12345"
 ```
 
 ## License
