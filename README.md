@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![CI](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml)
 
-[English](README.md) | [中文](README.zh-CN.md)
+[English](README.md) | [中文](README.zh-CN.md) | [Русский](README.ru.md)
 
 A GDB debugging tool designed for AI Agents (Claude Code, etc.). Uses a "thin client CLI + GDB built-in Python RPC Server" architecture, enabling stateful GDB debugging through Bash.
 

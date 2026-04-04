@@ -20,6 +20,7 @@ import click
 
 from . import __version__
 from .client import GDBClient, GDBClientError, GDBCommandError
+from .i18n import t
 from .launcher import GDBLauncherError, launch_attach, launch_core
 from .session import (
     cleanup_dead_sessions,
@@ -58,18 +59,18 @@ def get_client(session_id: str) -> GDBClient:
 @click.group()
 @click.version_option(version=__version__)
 def main() -> None:
-    """GDB CLI for AI - 瘦客户端 CLI + GDB 内置 Python RPC Server"""
+    """GDB CLI for AI - Thin client CLI + GDB built-in Python RPC Server"""
     pass
 
 
 @main.command()
-@click.option("--binary", "-b", required=True, help="可执行文件路径")
-@click.option("--core", "-c", required=True, help="Core dump 文件路径")
-@click.option("--sysroot", help="sysroot 路径 (跨机器调试)")
-@click.option("--solib-prefix", help="共享库前缀")
-@click.option("--source-dir", help="源码目录")
-@click.option("--timeout", default=600, help="心跳超时秒数 (默认 600)")
-@click.option("--gdb-path", default="gdb", help="GDB 可执行文件路径")
+@click.option("--binary", "-b", required=True, help=t("cli.load.binary_help"))
+@click.option("--core", "-c", required=True, help=t("cli.load.core_help"))
+@click.option("--sysroot", help=t("cli.load.sysroot_help"))
+@click.option("--solib-prefix", help=t("cli.load.solib_prefix_help"))
+@click.option("--source-dir", help=t("cli.load.source_dir_help"))
+@click.option("--timeout", default=600, help=t("cli.load.timeout_help"))
+@click.option("--gdb-path", default="gdb", help=t("cli.load.gdb_path_help"))
 def load(
     binary: str,
     core: str,
@@ -79,7 +80,7 @@ def load(
     timeout: int,
     gdb_path: str
 ) -> None:
-    """加载 core dump，启动 GDB 常驻进程"""
+    """Load core dump and start persistent GDB process"""
     # 检查是否已有相同 core 的会话
     existing = find_session_by_core(core)
     if existing:
@@ -122,13 +123,13 @@ def load(
 
 
 @main.command()
-@click.option("--pid", "-p", required=True, type=int, help="目标进程 PID")
-@click.option("--binary", "-b", help="可执行文件路径 (可选)")
-@click.option("--scheduler-locking/--no-scheduler-locking", default=True, help="启用 scheduler-locking")
-@click.option("--non-stop/--no-non-stop", default=True, help="启用 non-stop 模式")
-@click.option("--timeout", default=600, help="心跳超时秒数 (默认 600)")
-@click.option("--allow-write", is_flag=True, help="允许内存修改")
-@click.option("--allow-call", is_flag=True, help="允许函数调用")
+@click.option("--pid", "-p", required=True, type=int, help=t("cli.attach.pid_help"))
+@click.option("--binary", "-b", help=t("cli.attach.binary_help"))
+@click.option("--scheduler-locking/--no-scheduler-locking", default=True, help=t("cli.attach.scheduler_locking_help"))
+@click.option("--non-stop/--no-non-stop", default=True, help=t("cli.attach.non_stop_help"))
+@click.option("--timeout", default=600, help=t("cli.attach.timeout_help"))
+@click.option("--allow-write", is_flag=True, help=t("cli.attach.allow_write_help"))
+@click.option("--allow-call", is_flag=True, help=t("cli.attach.allow_call_help"))
 def attach(
     pid: int,
     binary: Optional[str],
@@ -138,7 +139,7 @@ def attach(
     allow_write: bool,
     allow_call: bool
 ) -> None:
-    """Attach 到运行中进程"""
+    """Attach to running process"""
     # 检查是否已有相同 PID 的会话 (幂等性)
     existing = find_session_by_pid(pid)
     if existing:
@@ -181,12 +182,12 @@ def attach(
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.eval_cmd.session_help"))
 @click.argument("expr")
-@click.option("--max-depth", default=3, help="递归深度限制")
-@click.option("--max-elements", default=50, help="数组元素限制")
+@click.option("--max-depth", default=3, help=t("cli.eval_cmd.max_depth_help"))
+@click.option("--max-elements", default=50, help=t("cli.eval_cmd.max_elements_help"))
 def eval_cmd(session: str, expr: str, max_depth: int, max_elements: int) -> None:
-    """求值 C/C++ 表达式"""
+    """Evaluate C/C++ expression"""
     try:
         with get_client(session) as client:
             result = client.eval(expr, max_depth=max_depth, max_elements=max_elements)
@@ -199,12 +200,12 @@ def eval_cmd(session: str, expr: str, max_depth: int, max_elements: int) -> None
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
-@click.option("--range", "range_str", help="线程范围 (如 3-10)")
-@click.option("--limit", default=20, help="最大返回数量")
-@click.option("--filter-state", help="过滤状态 (running/stopped)")
+@click.option("--session", "-s", required=True, help=t("cli.threads.session_help"))
+@click.option("--range", "range_str", help=t("cli.threads.range_help"))
+@click.option("--limit", default=20, help=t("cli.threads.limit_help"))
+@click.option("--filter-state", help=t("cli.threads.filter_state_help"))
 def threads(session: str, range_str: Optional[str], limit: int, filter_state: Optional[str]) -> None:
-    """列出线程"""
+    """List threads"""
     try:
         with get_client(session) as client:
             result = client.threads(range_str=range_str, limit=limit, filter_state=filter_state)
@@ -217,13 +218,13 @@ def threads(session: str, range_str: Optional[str], limit: int, filter_state: Op
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
-@click.option("--thread", "-t", "thread_id", type=int, help="指定线程 ID")
-@click.option("--limit", default=30, help="最大帧数")
-@click.option("--full", is_flag=True, help="包含局部变量")
-@click.option("--range", "range_str", help="帧范围 (如 5-15)")
+@click.option("--session", "-s", required=True, help=t("cli.bt.session_help"))
+@click.option("--thread", "-t", "thread_id", type=int, help=t("cli.bt.thread_help"))
+@click.option("--limit", default=30, help=t("cli.bt.limit_help"))
+@click.option("--full", is_flag=True, help=t("cli.bt.full_help"))
+@click.option("--range", "range_str", help=t("cli.bt.range_help"))
 def bt(session: str, thread_id: Optional[int], limit: int, full: bool, range_str: Optional[str]) -> None:
-    """获取 backtrace"""
+    """Get backtrace"""
     try:
         with get_client(session) as client:
             params = {"limit": limit, "full": full}
@@ -241,10 +242,10 @@ def bt(session: str, thread_id: Optional[int], limit: int, full: bool, range_str
 
 
 @main.command("frame")
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.frame.session_help"))
 @click.argument("number", type=int)
 def frame_cmd(session: str, number: int) -> None:
-    """选择栈帧"""
+    """Select stack frame"""
     try:
         with get_client(session) as client:
             result = client.frame_select(number)
@@ -257,11 +258,11 @@ def frame_cmd(session: str, number: int) -> None:
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
-@click.option("--thread", "-t", "thread_id", type=int, help="线程 ID")
-@click.option("--frame", "-f", default=0, help="栈帧编号")
+@click.option("--session", "-s", required=True, help=t("cli.locals_cmd.session_help"))
+@click.option("--thread", "-t", "thread_id", type=int, help=t("cli.locals_cmd.thread_help"))
+@click.option("--frame", "-f", default=0, help=t("cli.locals_cmd.frame_help"))
 def locals_cmd(session: str, thread_id: Optional[int], frame: int) -> None:
-    """获取局部变量"""
+    """Get local variables"""
     try:
         with get_client(session) as client:
             result = client.locals(thread_id=thread_id, frame=frame)
@@ -274,11 +275,11 @@ def locals_cmd(session: str, thread_id: Optional[int], frame: int) -> None:
 
 
 @main.command("exec")
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.exec.session_help"))
 @click.argument("command")
-@click.option("--safety-level", default="readonly", help="安全级别 (readonly/readwrite/full)")
+@click.option("--safety-level", default="readonly", help=t("cli.exec.safety_level_help"))
 def exec_cmd(session: str, command: str, safety_level: str) -> None:
-    """执行原始 GDB 命令"""
+    """Execute raw GDB command"""
     try:
         with get_client(session) as client:
             result = client.exec_cmd(command, safety_level=safety_level)
@@ -291,9 +292,9 @@ def exec_cmd(session: str, command: str, safety_level: str) -> None:
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.stop.session_help"))
 def stop(session: str) -> None:
-    """停止会话，安全退出 GDB"""
+    """Stop session and safely exit GDB"""
     try:
         # 发送停止命令
         with get_client(session) as client:
@@ -316,7 +317,7 @@ def stop(session: str) -> None:
 
 @main.command()
 def sessions() -> None:
-    """列出所有活跃会话"""
+    """List all active sessions"""
     # 清理僵尸会话
     cleanup_dead_sessions()
 
@@ -341,9 +342,9 @@ def sessions() -> None:
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.status.session_help"))
 def status(session: str) -> None:
-    """查看会话状态"""
+    """Check session status"""
     try:
         with get_client(session) as client:
             result = client.status()
@@ -373,12 +374,12 @@ def status(session: str) -> None:
 
 
 @main.command("eval-element")
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.eval_element.session_help"))
 @click.argument("expr")
-@click.option("--index", "-i", required=True, type=int, help="元素索引")
-@click.option("--max-depth", default=3, help="递归深度限制")
+@click.option("--index", "-i", required=True, type=int, help=t("cli.eval_element.index_help"))
+@click.option("--max-depth", default=3, help=t("cli.eval_element.max_depth_help"))
 def eval_element_cmd(session: str, expr: str, index: int, max_depth: int) -> None:
-    """访问数组/容器中的特定元素"""
+    """Access array/container element"""
     try:
         with get_client(session) as client:
             result = client.call("eval_element", expr=expr, index=index, max_depth=max_depth)
@@ -391,12 +392,12 @@ def eval_element_cmd(session: str, expr: str, index: int, max_depth: int) -> Non
 
 
 @main.command("thread-apply")
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.thread_apply.session_help"))
 @click.argument("command")
-@click.option("--threads", help="线程 ID 列表 (如 1,3,5)")
-@click.option("--all", "all_threads", is_flag=True, help="应用于所有线程")
+@click.option("--threads", help=t("cli.thread_apply.threads_help"))
+@click.option("--all", "all_threads", is_flag=True, help=t("cli.thread_apply.all_help"))
 def thread_apply_cmd(session: str, command: str, threads: Optional[str], all_threads: bool) -> None:
-    """批量线程操作"""
+    """Batch thread operations"""
     try:
         with get_client(session) as client:
             params = {"command": command}
@@ -417,11 +418,11 @@ def thread_apply_cmd(session: str, command: str, threads: Optional[str], all_thr
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
-@click.option("--thread", "-t", "thread_id", type=int, help="线程 ID")
-@click.option("--frame", "-f", default=0, help="栈帧编号")
+@click.option("--session", "-s", required=True, help=t("cli.args.session_help"))
+@click.option("--thread", "-t", "thread_id", type=int, help=t("cli.args.thread_help"))
+@click.option("--frame", "-f", default=0, help=t("cli.args.frame_help"))
 def args(session: str, thread_id: Optional[int], frame: int) -> None:
-    """获取函数参数"""
+    """Get function arguments"""
     try:
         with get_client(session) as client:
             params = {"frame": frame}
@@ -437,12 +438,12 @@ def args(session: str, thread_id: Optional[int], frame: int) -> None:
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
-@click.option("--names", "-n", help="寄存器名列表，逗号分隔 (如 rax,rbx,rip)")
-@click.option("--thread", "-t", "thread_id", type=int, help="线程 ID")
-@click.option("--frame", "-f", default=0, help="栈帧编号")
+@click.option("--session", "-s", required=True, help=t("cli.registers.session_help"))
+@click.option("--names", "-n", help=t("cli.registers.names_help"))
+@click.option("--thread", "-t", "thread_id", type=int, help=t("cli.registers.thread_help"))
+@click.option("--frame", "-f", default=0, help=t("cli.registers.frame_help"))
 def registers(session: str, names: Optional[str], thread_id: Optional[int], frame: int) -> None:
-    """查看寄存器值"""
+    """View register values"""
     try:
         with get_client(session) as client:
             params = {"frame": frame}
@@ -460,12 +461,12 @@ def registers(session: str, names: Optional[str], thread_id: Optional[int], fram
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.memory.session_help"))
 @click.argument("address")
-@click.option("--size", default=64, help="读取字节数 (默认 64, 最大 4096)")
-@click.option("--fmt", default="hex", type=click.Choice(["hex", "bytes", "string"]), help="输出格式")
+@click.option("--size", default=64, help=t("cli.memory.size_help"))
+@click.option("--fmt", default="hex", type=click.Choice(["hex", "bytes", "string"]), help=t("cli.memory.fmt_help"))
 def memory(session: str, address: str, size: int, fmt: str) -> None:
-    """检查内存内容"""
+    """Inspect memory content"""
     try:
         with get_client(session) as client:
             result = client.call("memory", address=address, size=size, fmt=fmt)
@@ -478,10 +479,10 @@ def memory(session: str, address: str, size: int, fmt: str) -> None:
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.ptype.session_help"))
 @click.argument("expr")
 def ptype(session: str, expr: str) -> None:
-    """查看表达式的类型信息"""
+    """View type information for expression"""
     try:
         with get_client(session) as client:
             result = client.call("ptype", expr=expr)
@@ -494,10 +495,10 @@ def ptype(session: str, expr: str) -> None:
 
 
 @main.command("thread-switch")
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.thread_switch.session_help"))
 @click.argument("thread_id", type=int)
 def thread_switch_cmd(session: str, thread_id: int) -> None:
-    """切换当前线程"""
+    """Switch current thread"""
     try:
         with get_client(session) as client:
             result = client.call("thread_switch", thread_id=thread_id)
@@ -510,10 +511,10 @@ def thread_switch_cmd(session: str, thread_id: int) -> None:
 
 
 @main.command("up")
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.up.session_help"))
 @click.argument("count", type=int, default=1)
 def frame_up_cmd(session: str, count: int) -> None:
-    """向调用者方向移动栈帧"""
+    """Move toward caller in stack"""
     try:
         with get_client(session) as client:
             result = client.call("frame", number=count, direction="up")
@@ -526,10 +527,10 @@ def frame_up_cmd(session: str, count: int) -> None:
 
 
 @main.command("down")
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.down.session_help"))
 @click.argument("count", type=int, default=1)
 def frame_down_cmd(session: str, count: int) -> None:
-    """向被调用者方向移动栈帧"""
+    """Move toward callee in stack"""
     try:
         with get_client(session) as client:
             result = client.call("frame", number=count, direction="down")
@@ -542,9 +543,9 @@ def frame_down_cmd(session: str, count: int) -> None:
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
+@click.option("--session", "-s", required=True, help=t("cli.sharedlibs.session_help"))
 def sharedlibs(session: str) -> None:
-    """查看加载的共享库"""
+    """View loaded shared libraries"""
     try:
         with get_client(session) as client:
             result = client.call("sharedlibs")
@@ -557,13 +558,13 @@ def sharedlibs(session: str) -> None:
 
 
 @main.command()
-@click.option("--session", "-s", required=True, help="会话 ID")
-@click.option("--start", help="起始地址或函数名 (默认当前 PC)")
-@click.option("--count", default=20, help="指令数量 (默认 20)")
-@click.option("--thread", "-t", "thread_id", type=int, help="线程 ID")
-@click.option("--frame", "-f", default=0, help="栈帧编号")
+@click.option("--session", "-s", required=True, help=t("cli.disasm.session_help"))
+@click.option("--start", help=t("cli.disasm.start_help"))
+@click.option("--count", default=20, help=t("cli.disasm.count_help"))
+@click.option("--thread", "-t", "thread_id", type=int, help=t("cli.disasm.thread_help"))
+@click.option("--frame", "-f", default=0, help=t("cli.disasm.frame_help"))
 def disasm(session: str, start: Optional[str], count: int, thread_id: Optional[int], frame: int) -> None:
-    """反汇编"""
+    """Disassemble"""
     try:
         with get_client(session) as client:
             params = {"count": count, "frame": frame}
@@ -582,7 +583,7 @@ def disasm(session: str, start: Optional[str], count: int, thread_id: Optional[i
 
 @main.command()
 def env_check() -> None:
-    """环境自检：gdb版本、ptrace权限、Python版本"""
+    """Environment check: GDB version, ptrace permissions, Python version"""
     import platform
     import shutil
 

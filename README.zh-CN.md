@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![CI](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml)
 
-[English](README.md) | [中文](README.zh-CN.md)
+[English](README.md) | [中文](README.zh-CN.md) | [Русский](README.ru.md)
 
 一个为 AI Agent（Claude Code 等）设计的 GDB 调试工具。采用"瘦客户端 CLI + GDB 内置 Python RPC Server"架构，通过 Bash 即可完成有状态的 GDB 调试。
 
